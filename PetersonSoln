@@ -1,7 +1,10 @@
+// In this example we are implementing Peterson solution to ensure ME, Progress and Bounded Wait.
+
+
+
 #include <iostream>
 #include <thread>
 #include <vector>
-#include <atomic>
 
 using namespace std;
 
@@ -20,8 +23,8 @@ void lessgo(atomic<int>& turn, vector<atomic<bool>>& flag, int id) {
 }
 
 int main() {
-    atomic<int> turn(0); // 2 values possible 0 or 1
-    vector<atomic<bool>> flag(2); // Flags for each process
+    int turn = 0 // 2 values possible 0 or 1
+    vector<bool> flag(2); // Flags for each process
 
     // Create threads for process 0 and process 1
     thread t1(lessgo, ref(turn), ref(flag), 0);
