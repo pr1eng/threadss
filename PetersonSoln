@@ -1,0 +1,35 @@
+#include <iostream>
+#include <thread>
+#include <vector>
+#include <atomic>
+
+using namespace std;
+
+void lessgo(atomic<int>& turn, vector<atomic<bool>>& flag, int id) {
+    flag[id] = true; // Indicate interest
+    turn = 1 - id; // Give turn to the other process
+
+    // Wait until the other process is not interested or it's our turn
+    while (flag[1 - id] && turn == 1 - id);
+
+    // Critical section
+    cout << id << " is accessing the critical section." << endl;
+
+    // Exit section
+    flag[id] = false; // Indicate no longer interested
+}
+
+int main() {
+    atomic<int> turn(0); // 2 values possible 0 or 1
+    vector<atomic<bool>> flag(2); // Flags for each process
+
+    // Create threads for process 0 and process 1
+    thread t1(lessgo, ref(turn), ref(flag), 0);
+    thread t2(lessgo, ref(turn), ref(flag), 1);
+
+    // Join threads
+    t1.join();
+    t2.join();
+
+    return 0;
+}
